@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Query Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f8f9fa;
+      padding: 2rem;
+      color: #2c3e50;
+    }
+
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #657786;
+      font-weight: 400;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e1e8ed;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .kpi-card.highlighted {
+      border: 2px solid #4a90e2;
+      box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+    }
+
+    .kpi-label {
+      font-size: 0.875rem;
+      color: #657786;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #4a5f7f;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e1e8ed;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .chart-container.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .chart-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+
+    .chart-subtitle {
+      font-size: 0.875rem;
+      color: #657786;
+      margin-bottom: 1rem;
+    }
+
+    canvas {
+      max-height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>Query Analytics Dashboard</h1>
+    <div class="subtitle">Brian Julius</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card highlighted">
+        <div class="kpi-label">Total Queries Today</div>
+        <div class="kpi-value">8</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Average Queries Per Day</div>
+        <div class="kpi-value">17.6</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Number of Categories</div>
+        <div class="kpi-value">14</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Max Queries in a Day</div>
+        <div class="kpi-value">39</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-container">
+        <div class="chart-title">Categories by Percent</div>
+        <div class="chart-subtitle">Distribution of query categories</div>
+        <canvas id="categoryChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">Models by Percent</div>
+        <div class="chart-subtitle">Distribution of AI models used</div>
+        <canvas id="modelChart"></canvas>
+      </div>
+
+      <div class="chart-container full-width">
+        <div class="chart-title">Total Queries by Day</div>
+        <div class="chart-subtitle">Query volume over time</div>
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+    Chart.defaults.color = '#657786';
+
+    // Category Chart
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'bar',
+      data: {
+        labels: ["data-analysis","coding","selection","navigation","clarification","research","configuration","refactoring","other","debugging","conversation","personal","writing","general"],
+        datasets: [{
+          label: 'Percentage',
+          data: [28.4,23.9,10.2,9.1,5.7,4.5,3.4,3.4,2.3,2.3,1.1,1.1,1.1,1.1],
+          backgroundColor: '#5a7a9f',
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.parsed.x.toFixed(1) + '%';
+              }
+            }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            offset: 4,
+            color: '#2c3e50',
+            font: {
+              weight: 'bold',
+              size: 12
+            },
+            formatter: function(value) {
+              return Math.round(value) + '%';
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            },
+            grid: {
+              color: '#e1e8ed'
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    // Model Chart
+    new Chart(document.getElementById('modelChart'), {
+      type: 'bar',
+      data: {
+        labels: ["Claude Sonnet 4.5","Claude Opus 4.1","Gemini Pro 2.5"],
+        datasets: [{
+          label: 'Percentage',
+          data: [77.3,17,5.7],
+          backgroundColor: '#7591b3',
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.parsed.x.toFixed(1) + '%';
+              }
+            }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            offset: 4,
+            color: '#2c3e50',
+            font: {
+              weight: 'bold',
+              size: 12
+            },
+            formatter: function(value) {
+              return Math.round(value) + '%';
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            },
+            grid: {
+              color: '#e1e8ed'
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    // Daily Queries Chart
+    new Chart(document.getElementById('dailyChart'), {
+      type: 'bar',
+      data: {
+        labels: ["10/11/2025","10/12/2025","10/13/2025","10/14/2025","10/15/2025"],
+        datasets: [{
+          label: 'Queries',
+          data: [27,7,39,7,8],
+          backgroundColor: '#5a7a9f',
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            offset: 4,
+            color: '#2c3e50',
+            font: {
+              weight: 'bold',
+              size: 12
+            },
+            formatter: function(value) {
+              return Math.round(value);
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            },
+            grid: {
+              color: '#e1e8ed'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

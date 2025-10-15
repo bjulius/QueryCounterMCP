@@ -1,0 +1,14 @@
+node_modules/
+build/
+*.log
+.DS_Store
+.env
+.env.local
+.mcp.json
+*.local.json
+.claude/settings.local.json
+QueryTrackMCP.md
+QueryTrackMCP.csv
+query-analytics.html
+query-chart.html
+*.png
