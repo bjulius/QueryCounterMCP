@@ -16,7 +16,7 @@ An MCP (Model Context Protocol) server that logs all your LLM queries to a local
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/YourUsername/QueryCounterMCP.git
+git clone https://github.com/bjulius/QueryCounterMCP.git
 cd QueryCounterMCP
 ```
 
